@@ -1,72 +1,30 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { computed } from 'vue'
+import { RouterLink, RouterView, useRoute } from 'vue-router'
+
+const route = useRoute()
+const hideHeader = computed(() => Boolean(route.query.hideHeader));
 </script>
 
 <template>
-  <header>
-    <div class="wrapper" v-if="$route.name !== 'streets-in-sofia-named-after-a-plant'">
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/maps/streets-in-sofia-named-after-a-plant">Streets in Sofia named after a plant</RouterLink>
-      </nav>
-    </div>
-  </header>
-  <RouterView />
+  <v-app>
+    <v-app-bar flat v-if="!hideHeader">
+      <template v-slot:prepend>
+        <RouterLink to="/">
+          <v-img
+            src="@/assets/wikidata-logo.svg"
+            width="50"
+            class="mr-2"
+            alt="Wikidata"
+          />
+        </RouterLink>
+        </template>
+      <v-app-bar-title>
+        Plus
+      </v-app-bar-title>
+    </v-app-bar>
+    <v-main>
+      <RouterView />
+    </v-main>
+  </v-app>
 </template>
-
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
-</style>

@@ -1,14 +1,14 @@
 <template>
-  <div>
-    <h1>Булеварди в София и тяхната памет</h1>
+  <div class="map-container">
+    <h1 class="text-h4 bg-white pa-3">Булеварди в София и тяхната памет</h1>
     <v-map :center="[42.698334, 23.319941]">
       <osm-tile-layer />
       <osm-relation
-        v-for="osmRelationId in relationIds1"
+        v-for="osmRelationId in relationIds"
         :key="osmRelationId"
         :id="osmRelationId"
         :stroke="data?.results.bindings.find((x: any) => x.osmRelationId?.value == osmRelationId)?.stroke.value"
-        :stroke-width="5"
+        :stroke-width="4"
         :popup-content="getPopupContent(osmRelationId)"
       />
     </v-map>
@@ -40,7 +40,6 @@ SELECT ?id ?namesake ?namesake_desc
     CONCAT('<hr>[', str(?namesake), ' ', ?namesake_label, ']')
   ) AS ?description)
   (CONCAT('#', substr(SHA1(CONCAT(str(?id), 'kur')), 1, 6)) AS ?stroke)
-  (4 AS ?stroke_width)
   (?osm AS ?osmRelationId)
 WHERE {
   ?id wdt:P31 wd:Q54114 ;
@@ -76,7 +75,7 @@ const url = wdk.sparqlQuery(query)
 
 const data = ref<SparqlResults>();
 
-const relationIds1 = computed(() => data.value?.results.bindings.map((item) => item.osmRelationId?.value) || []);
+const relationIds = computed(() => data.value?.results.bindings.map((item) => item.osmRelationId?.value) || []);
 
 function getPopupContent(osmRelationId: string) {
   const item = (data.value?.results.bindings || []).find((x) => x.osmRelationId?.value == osmRelationId);
@@ -98,13 +97,3 @@ onMounted(async () => {
   }
 });
 </script>
-
-<style scoped>
-h1 {
-  margin: 0 auto;
-  background-color: rgba(255, 255, 255, 0.8);
-  z-index: 1000;
-  position: relative;
-  text-align: center;
-}
-</style>

@@ -6,7 +6,7 @@
 
 <script lang="ts" setup>
 import { ref, useTemplateRef, provide, onMounted } from 'vue'
-import { map } from 'leaflet';
+import { map, control } from 'leaflet';
 
 import type { LatLngExpression } from 'leaflet';
 
@@ -24,7 +24,13 @@ onMounted(() => {
     throw new Error('Map reference is not available');
   }
 
-  mapInstance.value = map(mapRef.value);
+  mapInstance.value = map(mapRef.value, {
+    zoomControl: false,
+  });
+
+  control.zoom({
+    position: 'bottomright'
+  }).addTo(mapInstance.value);
 
   if (props.center) {
     mapInstance.value.setView(props.center, 11.5);
@@ -34,12 +40,8 @@ onMounted(() => {
 
 <style scoped>
 .map {
-  /* height: 600px; */
-  /* width: 100%; */
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  flex: 1;
+  height: 100%;
+  width: 100%;
 }
 </style>

@@ -1,25 +1,17 @@
 <template>
-  <div>
-    <h1>Улици в София с име на растение</h1>
-
+  <div class="map-container">
+    <h1 class="text-h4 bg-white pa-3">Улици в София с име на растение</h1>
     <v-map :center="[42.698334, 23.319941]">
       <osm-tile-layer />
       <osm-relation
-        v-for="osmRelationId in relationIds1"
-        :key="osmRelationId"
-        :id="osmRelationId"
-        :stroke="data?.results.bindings.find((x: any) => x.osmRelationId?.value == osmRelationId)?.stroke.value"
+        v-for="relationId in relationIds"
+        :key="relationId"
+        :id="relationId"
+        :stroke="data?.results.bindings.find((x: any) => x.osmRelationId?.value == relationId)?.stroke.value"
         :stroke-width="5"
-        :popup-content="getPopupContent(osmRelationId)"
+        :popup-content="getPopupContent(relationId)"
       />
     </v-map>
-    <!-- v-model:zoom="zoom" , 11.5 -->
-    <!-- <div v-for="x in (data?.results.bindings || [])" :key="x.id.value" style="padding-top: 20px">
-      title: {{ x.title.value }}<br />
-      IMG: {{ x.IMG.value }}<br />
-      KVARTAL_WT: {{ x.KVARTAL_WT.value }}<br />
-      description: {{ x.description.value }}<br />
-    </div> -->
   </div>
 </template>
 
@@ -39,10 +31,8 @@ const wdk = WBK({
 const query = `
 SELECT ?id ?namesake (SAMPLE(?img) AS ?IMG) (SAMPLE(?kvartal_wikitext) AS ?KVARTAL_WT)
   (CONCAT('<big>', ?namesake_wikitext, '</big>') AS ?title)
-  (COALESCE(CONCAT('<hr>ул. <em><a href="https://www.openstreetmap.org/relation/', ?osm, '" target="_blank">', ?bul_label, '</a></em> в кв.', 
-  ?KVARTAL_WT, ', носи името на растението ', ?namesake_wikitext, ' (<em><a href="https://www.ipni.org/n/', ?ipni, '" target="_blank">', ?taxon_name, '</a></em>)'), CONCAT('<hr>[', str(?id), ' обект в уикиданни]')) AS ?description)
+  (COALESCE(CONCAT('<hr>ул. <em><a href="https://www.openstreetmap.org/relation/', ?osm, '" target="_blank">', ?bul_label, '</a></em> в кв.', ?KVARTAL_WT, ', носи името на растението ', ?namesake_wikitext, ' (<em><a href="https://www.ipni.org/n/', ?ipni, '" target="_blank">', ?taxon_name, '</a></em>)'), CONCAT('<hr>[', str(?id), ' обект в уикиданни]')) AS ?description)
   (CONCAT('#', substr(SHA1(CONCAT(str(?id), 'cvete')), 1, 6)) AS ?stroke)
-  (5 AS ?stroke_width)
   (?osm AS ?osmRelationId)
 WHERE {
   ?id wdt:P31 wd:Q79007 ;
@@ -88,7 +78,7 @@ const url = wdk.sparqlQuery(query)
 
 const data = ref<SparqlResults>();
 
-const relationIds1 = computed(() => data.value?.results.bindings.map((item) => item.osmRelationId?.value) || []);
+const relationIds = computed(() => data.value?.results.bindings.map((item) => item.osmRelationId?.value) || []);
 
 function getPopupContent(osmRelationId: string) {
   const item = (data.value?.results.bindings || []).find((x) => x.osmRelationId?.value == osmRelationId);
@@ -110,13 +100,3 @@ onMounted(async () => {
   }
 });
 </script>
-
-<style scoped>
-h1 {
-  margin: 0 auto;
-  background-color: rgba(255, 255, 255, 0.8);
-  z-index: 1000;
-  position: relative;
-  text-align: center;
-}
-</style>

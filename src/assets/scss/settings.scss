@@ -1,0 +1,87 @@
+$primary-fontsize: 1.125rem; //18px
+$secondary-fontsize: 1rem; //16px
+
+@forward 'vuetify/settings' with (
+  $body-font-family: (Inter, system-ui),
+
+  $button-text-transform: none,
+  $card-disabled-opacity: 0.99,
+
+  $font-weights: (
+    'regular': 400,
+    'medium': 500,
+    'bold': 600,
+    'black': 700
+  ),
+  $typography: (
+    'h1': (
+      'size': 2.625rem, //42px
+      'weight': 400,
+      'line-height': 3.375rem, //54px
+      'letter-spacing': normal
+    ),
+    'h2': (
+      'size': 2rem, //32px
+      'weight': 600,
+      'line-height': 2.4375rem, //39px
+      'letter-spacing': normal
+    ),
+    'h3': (
+      'size': 1.625rem, //26px
+      'weight': 500, //IO: 400,
+      'line-height': 2rem, //32px //IO: 2.125rem/34px
+      'letter-spacing': normal
+    ),
+    'h4': (
+      'size': 1.375rem, //22px, //IO: 1rem/16px
+      'weight': 600, //IO: 400,
+      'line-height': 1.6875rem, //27px, //IO: 1.5rem/24px
+      'letter-spacing': normal
+    ),
+    'h5': ( //not specified in styles, taken from Coach
+      'size': 1.25rem, //20px
+      'weight': 500,
+      'line-height': 1.6875rem, //27px
+      'letter-spacing': normal
+    ),
+    'h6': (
+      'letter-spacing': normal
+    ),
+    'subtitle-1': ( //not specified in styles, taken from IO
+      'size': $secondary-fontsize,
+      'weight': 600,
+      'line-height': 1.3rem,
+      'letter-spacing': normal
+    ),
+    'subtitle-2': ( //not specified in styles, taken from Coach. Note: this is inherited by v-card
+      'size': 0.875rem, //14px
+      'weight': normal,
+      'line-height': 1.3rem,
+      'letter-spacing': normal
+    ),
+    'body-1': (
+      'size': $primary-fontsize,
+      'weight': 400,
+      'line-height': 1.6875rem, //27px
+      'letter-spacing': normal
+    ),
+    'body-2': (
+      'size': $secondary-fontsize,
+      'weight': 400,
+      'line-height': 1.5rem, //24px
+      'letter-spacing': normal
+    ),
+    'button': (
+      'letter-spacing': normal
+    ),
+    'caption': (
+      'letter-spacing': normal
+    ),
+    'overline': ( //not specified in styles, taken from IO
+      'size': $secondary-fontsize,
+      'weight': 400,
+      'line-height': 1.5rem,
+      'letter-spacing': normal
+    )
+  )
+);
