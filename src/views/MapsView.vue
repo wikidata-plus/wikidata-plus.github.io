@@ -7,7 +7,7 @@
         v-for="relationId in relationIds"
         :key="relationId"
         :id="relationId"
-        :stroke="data?.results.bindings.find((x: any) => x.osmRelationId?.value == relationId)?.stroke.value"
+        :stroke="getStrokeColor(relationId)"
         :stroke-width="5"
         :popup-content="getPopupContent(relationId)"
       />
@@ -22,17 +22,28 @@ import OsmRelation from '@/components/map/OsmRelation.vue';
 import { ref, computed, onMounted } from 'vue';
 import { WBK, type SparqlResults } from 'wikibase-sdk';
 import axios from 'axios';
+import { useColor } from '@/composables/color';
 
 const wdk = WBK({
   instance: 'https://www.wikidata.org',
   sparqlEndpoint: 'https://query.wikidata.org/sparql'
 });
 
+const { stringToHexColor } = useColor();
+
+function getStrokeColor(relationId: string) {
+  const item = data.value?.results.bindings.find(x => x.osmRelationId?.value == relationId);
+
+  return item?.id.value
+    ? stringToHexColor(item?.id.value)
+    : '#000000';
+}
+
+
 const query = `
 SELECT ?id ?namesake (SAMPLE(?img) AS ?IMG) (SAMPLE(?kvartal_wikitext) AS ?KVARTAL_WT)
   (CONCAT('<big>', ?namesake_wikitext, '</big>') AS ?title)
   (COALESCE(CONCAT('<hr>ул. <em><a href="https://www.openstreetmap.org/relation/', ?osm, '" target="_blank">', ?bul_label, '</a></em> в кв.', ?KVARTAL_WT, ', носи името на растението ', ?namesake_wikitext, ' (<em><a href="https://www.ipni.org/n/', ?ipni, '" target="_blank">', ?taxon_name, '</a></em>)'), CONCAT('<hr>[', str(?id), ' обект в уикиданни]')) AS ?description)
-  (CONCAT('#', substr(SHA1(CONCAT(str(?id), 'cvete')), 1, 6)) AS ?stroke)
   (?osm AS ?osmRelationId)
 WHERE {
   ?id wdt:P31 wd:Q79007 ;
@@ -80,8 +91,8 @@ const data = ref<SparqlResults>();
 
 const relationIds = computed(() => data.value?.results.bindings.map((item) => item.osmRelationId?.value) || []);
 
-function getPopupContent(osmRelationId: string) {
-  const item = (data.value?.results.bindings || []).find((x) => x.osmRelationId?.value == osmRelationId);
+function getPopupContent(relationId: string) {
+  const item = (data.value?.results.bindings || []).find((x) => x.osmRelationId?.value == relationId);
   return `
     <div align="center">
       ${item?.title.value}<br>

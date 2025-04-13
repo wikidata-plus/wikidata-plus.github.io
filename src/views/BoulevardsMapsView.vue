@@ -7,7 +7,7 @@
         v-for="osmRelationId in relationIds"
         :key="osmRelationId"
         :id="osmRelationId"
-        :stroke="data?.results.bindings.find((x: any) => x.osmRelationId?.value == osmRelationId)?.stroke.value"
+        :stroke="getStrokeColor(osmRelationId)"
         :stroke-width="4"
         :popup-content="getPopupContent(osmRelationId)"
       />
@@ -22,11 +22,22 @@ import OsmRelation from '@/components/map/OsmRelation.vue';
 import { ref, computed, onMounted } from 'vue';
 import { WBK, type SparqlResults } from 'wikibase-sdk';
 import axios from 'axios';
+import { useColor } from '@/composables/color';
 
 const wdk = WBK({
   instance: 'https://www.wikidata.org',
   sparqlEndpoint: 'https://query.wikidata.org/sparql'
 });
+
+const { stringToHexColor } = useColor();
+
+function getStrokeColor(relationId: string) {
+  const item = data.value?.results.bindings.find(x => x.osmRelationId?.value == relationId);
+
+  return item?.id.value
+    ? stringToHexColor(item?.id.value)
+    : '#000000';
+}
 
 const query = `
 SELECT ?id ?namesake ?namesake_desc
@@ -39,7 +50,6 @@ SELECT ?id ?namesake ?namesake_desc
     CONCAT('<hr>[', str(?namesake), ' ', ?namesake_label, ']<br>', ?namesake_desc),
     CONCAT('<hr>[', str(?namesake), ' ', ?namesake_label, ']')
   ) AS ?description)
-  (CONCAT('#', substr(SHA1(CONCAT(str(?id), 'kur')), 1, 6)) AS ?stroke)
   (?osm AS ?osmRelationId)
 WHERE {
   ?id wdt:P31 wd:Q54114 ;
