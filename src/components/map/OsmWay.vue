@@ -2,10 +2,10 @@
   <OsmPolyline
     :lat-lngs="coords"
     :options="{
-      color: props.stroke,
-      weight: props.strokeWidth
+      color: stroke,
+      weight: strokeWidth
     }"
-    :popup-content="props.popupContent"
+    :popup-content="popupContent"
   >
     <slot></slot>
   </OsmPolyline>

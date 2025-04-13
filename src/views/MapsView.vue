@@ -28,7 +28,7 @@ import VMap from '@/components/map/VMap.vue';
 import OsmTileLayer from '@/components/map/layers/OsmTileLayer.vue';
 import OsmRelation from '@/components/map/OsmRelation.vue';
 import { ref, computed, onMounted } from 'vue';
-import { WBK } from 'wikibase-sdk';
+import { WBK, type SparqlResults } from 'wikibase-sdk';
 import axios from 'axios';
 
 const wdk = WBK({
@@ -86,12 +86,12 @@ GROUP BY ?id ?title ?namesake ?namesake_label ?namesake_desc ?namesake_wiki_name
 
 const url = wdk.sparqlQuery(query)
 
-const data = ref();
+const data = ref<SparqlResults>();
 
-const relationIds1 = computed(() => data.value?.results.bindings.map((item: any) => item.osmRelationId?.value) || []);
+const relationIds1 = computed(() => data.value?.results.bindings.map((item) => item.osmRelationId?.value) || []);
 
-function getPopupContent(osmRelationId: any) {
-  const item = (data.value?.results.bindings || []).find((x: any) => x.osmRelationId?.value == osmRelationId);
+function getPopupContent(osmRelationId: string) {
+  const item = (data.value?.results.bindings || []).find((x) => x.osmRelationId?.value == osmRelationId);
   return `
     <div align="center">
       ${item?.title.value}<br>
@@ -102,7 +102,7 @@ function getPopupContent(osmRelationId: any) {
 
 onMounted(async () => {
   try {
-    const response = await axios.get(url);
+    const response = await axios.get<SparqlResults>(url);
  
     data.value = response.data;
   } catch (error) {
