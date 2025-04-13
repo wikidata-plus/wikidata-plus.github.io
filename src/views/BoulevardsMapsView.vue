@@ -35,7 +35,7 @@ function getStrokeColor(relationId: string) {
   const item = data.value?.results.bindings.find(x => x.osmRelationId?.value == relationId);
 
   return item?.id.value
-    ? stringToHexColor(item?.id.value)
+    ? stringToHexColor(item?.id.value + 'bul')
     : '#000000';
 }
 

@@ -12,7 +12,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { computed } from 'vue';
+import { useQuery } from '@tanstack/vue-query'
 import { getFeature } from "@/endpoints/osm";
 import OsmWay from './OsmWay.vue';
 
@@ -23,12 +24,16 @@ const props = defineProps<{
   popupContent?: string,
 }>();
 
-const wayIds = ref<number[]>([]);
-onMounted(async () => {
-  const relation = await getFeature("relation", Number(props.id));
-
-  wayIds.value = relation.members
-    .filter(m => m.type === 'way')
-    .map(m => m.ref) || [];
+const { data: relation } = useQuery({
+  queryKey: ['osmRelation', props.id],
+  queryFn() {
+    return getFeature("relation", Number(props.id));
+  },
+  staleTime: Infinity,
+  enabled: computed(() => !!props.id)
 })
+
+const wayIds = computed(() => relation.value?.members
+  .filter(m => m.type === 'way')
+  .map(m => m.ref) || []);
 </script>

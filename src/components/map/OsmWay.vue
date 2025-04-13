@@ -12,7 +12,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { computed } from 'vue';
+import { useQuery } from '@tanstack/vue-query'
 import { getFeature, getFeatures } from "@/endpoints/osm";
 import type { LatLngExpression } from 'leaflet';
 import OsmPolyline from './OsmPolyline.vue';
@@ -24,13 +25,23 @@ const props = defineProps<{
   popupContent?: string,
 }>();
 
-const coords = ref<LatLngExpression[]>([]);
+const { data: way } = useQuery({
+  queryKey: ['osmWay', props.id],
+  queryFn() {
+    return getFeature("way", props.id);
+  },
+  staleTime: Infinity,
+  enabled: computed(() => !!props.id)
+})
 
-onMounted(async () => {
-  const way = await getFeature("way", props.id);
+const { data: nodes } = useQuery({
+  queryKey: ['osmWayNodes', way],
+  queryFn() {
+    return getFeatures("node", way.value?.nodes || []);
+  },
+  staleTime: Infinity,
+  enabled: computed(() => !!way.value)
+})
 
-  const nodes = await getFeatures("node", way.nodes);
-
-  coords.value = nodes.map(node => [node.lat, node.lon]);
-});
+const coords = computed<LatLngExpression[]>(() => nodes.value?.map((node) => [node.lat, node.lon]) || []);
 </script>
