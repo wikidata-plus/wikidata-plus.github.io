@@ -1,6 +1,6 @@
 import { create, windowedFiniteBatchScheduler } from "@yornaath/batshit";
 import { getFeatures as getFeaturesRaw } from "osm-api";
-import type { OsmFeatureType, UtilFeatureForType } from "osm-api/dist/types";
+import type { OsmFeatureType, UtilFeatureForType } from "osm-api";
 
 function getFeatureBatchManager<T extends OsmFeatureType>(type: T) {
   return create({

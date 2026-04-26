@@ -1,6 +1,6 @@
 <template>
   <div class="map-container">
-    <h1 class="text-h4 bg-white pa-3">Улици в София с име на растение</h1>
+    <h1 class="text-h4 bg-white my-0 pa-3">Улици в София с име на растение</h1>
     <v-map :center="[42.698334, 23.319941]">
       <osm-tile-layer />
       <osm-relation
